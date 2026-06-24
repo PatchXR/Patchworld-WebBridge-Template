@@ -52,6 +52,21 @@ The context is passed as an argument to `onData`, but you can also access it any
 console.log(window.PatchWorld.context.username);
 ```
 
+### 🎛️ Physical Block Interface (IO)
+The WebBridge block in PatchWorld has physical inputs and outputs you can interact with from Javascript.
+Override these properties on `PatchWorld` to receive physical inputs:
+- `PatchWorld.onInterfaceMessageIn = function(txt) { ... }` : Receives text from the "Text In" physical connection.
+- `PatchWorld.onInterfaceInputPartConnected = function(data) { ... }` : Called when a block is plugged into the "Parts In" connection. `data` is an object: `{ fullId, partId }`.
+- `PatchWorld.onInterfaceInputPartDisconnected = function(data) { ... }` : Called when a block is unplugged.
+- `PatchWorld.onInterfaceInputJolt = function(value) { ... }` : Called when the "Jolt In" receives a physical trigger.
+
+Use these helper methods to trigger physical outputs:
+- `await PatchWorld.interfaceMessageOut(txt)` : Sends text to the physical "Text Out" connection.
+- `await PatchWorld.interfaceSendJolt(value)` : Emits a physical jolt from "Jolt Out".
+- `await PatchWorld.interfaceClearPartRefs()` : Disconnects all blocks from the "Parts Out" store.
+- `await PatchWorld.interfaceAddPartRef(targetBlock, partID)` : Connects a specific block to "Parts Out".
+- `await PatchWorld.interfaceRemovePartRef(targetBlock, partID)` : Disconnects a specific block from "Parts Out".
+
 ---
 
 ## 🛠️ API Usage

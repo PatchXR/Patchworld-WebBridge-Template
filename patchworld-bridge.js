@@ -23,6 +23,12 @@ window.PatchWorld = {
     onPlayerConnect: null,
     onPlayerDisconnect: null,
 
+    // Interface Block IO events
+    onInterfaceMessageIn: null,
+    onInterfaceInputPartConnected: null,
+    onInterfaceInputPartDisconnected: null,
+    onInterfaceInputJolt: null,
+
     // Enum matching C# BodyPart for targeting player parts
     PlayerBodyPart: {
         Root: 0,
@@ -120,6 +126,35 @@ window.PatchWorld = {
         const parts = fullID.split('/');
         if (parts.length <= 1) return "";
         return parts.slice(0, -1).join('/');
+    },
+
+    /**
+     * Interface IO Methods
+     * These require the bridge to be active (context.bridgeId must exist).
+     */
+    interfaceMessageOut: function(txt) {
+        if (!this.context || !this.context.bridgeId) return Promise.reject("Bridge ID not found");
+        return this.runCommand("InterfaceMessageOut", this.context.bridgeId, txt);
+    },
+    
+    interfaceSendJolt: function(value) {
+        if (!this.context || !this.context.bridgeId) return Promise.reject("Bridge ID not found");
+        return this.runCommand("InterfaceSendJolt", this.context.bridgeId, value);
+    },
+    
+    interfaceClearPartRefs: function() {
+        if (!this.context || !this.context.bridgeId) return Promise.reject("Bridge ID not found");
+        return this.runCommand("InterfaceClearPartRefs", this.context.bridgeId);
+    },
+    
+    interfaceAddPartRef: function(targetBlock, partID = -1) {
+        if (!this.context || !this.context.bridgeId) return Promise.reject("Bridge ID not found");
+        return this.runCommand("InterfaceAddPartRef", this.context.bridgeId, targetBlock, partID);
+    },
+    
+    interfaceRemovePartRef: function(targetBlock, partID = -1) {
+        if (!this.context || !this.context.bridgeId) return Promise.reject("Bridge ID not found");
+        return this.runCommand("InterfaceRemovePartRef", this.context.bridgeId, targetBlock, partID);
     }
 };
 
@@ -197,6 +232,30 @@ function setupBridgeListeners() {
         
         if (typeof window.PatchWorld.onPlayerDisconnect === 'function') {
             window.PatchWorld.onPlayerDisconnect(player);
+        }
+    };
+
+    window.PatchWorld._internal_onInterfaceMessageIn = function(txt) {
+        if (typeof window.PatchWorld.onInterfaceMessageIn === 'function') {
+            window.PatchWorld.onInterfaceMessageIn(txt);
+        }
+    };
+
+    window.PatchWorld._internal_onInterfaceInputPartConnected = function(data) {
+        if (typeof window.PatchWorld.onInterfaceInputPartConnected === 'function') {
+            window.PatchWorld.onInterfaceInputPartConnected(data);
+        }
+    };
+
+    window.PatchWorld._internal_onInterfaceInputPartDisconnected = function(data) {
+        if (typeof window.PatchWorld.onInterfaceInputPartDisconnected === 'function') {
+            window.PatchWorld.onInterfaceInputPartDisconnected(data);
+        }
+    };
+
+    window.PatchWorld._internal_onInterfaceInputJolt = function(value) {
+        if (typeof window.PatchWorld.onInterfaceInputJolt === 'function') {
+            window.PatchWorld.onInterfaceInputJolt(value);
         }
     };
 

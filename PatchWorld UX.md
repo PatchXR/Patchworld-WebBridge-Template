@@ -57,5 +57,19 @@ These are classes derived from `interactiveBase`:
 - **Button**: A standard button. (*`Button3D.cs`*)
 - **Draggable Part**: A part that can be dragged. (*`InteractiveDrag.cs`*)
 
+## Web Bridge Block (UI Integration)
+The **Web Bridge Block** allows bidirectional communication between PatchWorld and an embedded WebBrowser. It acts as a physical interface for web developers to link virtual objects to HTML/JS logic.
+
+### Physical IOs on the Block
+- **Inputs:**
+  - `Browser (Selection)`: Must be connected to a WebBrowser block to inject the JS Bridge API.
+  - `Text In`: Receives text from connected blocks and sends it to JS (`onInterfaceMessageIn`).
+  - `Parts In`: When a block or player is connected here, it becomes the "Target". The JS receives `onInterfaceInputPartConnected` and can use it as the default target for commands (Move, Scale, Hide, Lock).
+  - `Jolt In`: Any jolt received here triggers `onInterfaceInputJolt` in the JS.
+- **Outputs:**
+  - `Text Out`: A read-only text panel updated directly from JS (`interfaceMessageOut`).
+  - `Parts Out`: A dynamic selection output. The JS can script which blocks this output connects to (via `interfaceAddPartRef` / `interfaceRemovePartRef`), effectively allowing the web UI to route connections dynamically.
+  - `Jolt Out`: Emits a jolt whenever the JS calls `interfaceSendJolt`.
+
 ## Additional Resources
 - **Wiki**: [wiki.patchxr.io](https://wiki.patchxr.io/)
