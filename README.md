@@ -1,5 +1,7 @@
 # PatchWorld Web Bridge - Example Template
 
+**[👉 See the Live Example Here!](https://patchxr.github.io/Patchworld-WebBridge-Template/)**
+
 Welcome! This template is designed for PatchWorld players who want to build their own custom web interfaces (Web Bridge) to control or display things inside their PatchWorld worlds. You don't need to be an expert developer to use this!
 
 ## 🌐 What is this?
