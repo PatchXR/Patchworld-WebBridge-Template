@@ -149,15 +149,14 @@
         <hr style="border: 1px solid #0f3460; width: 100%; margin: 20px 0;">
         
         <h2 style="font-size: 16px; margin-bottom: 10px;">Blocks & Scene</h2>
-        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-            <input type="text" id="copySourceId" placeholder="Source fullID" value="" disabled style="margin-bottom: 0;">
-            <input type="text" id="copyParentId" placeholder="Parent fullID (optional)" value="" disabled style="margin-bottom: 0;">
-        </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
-            <button id="copyBlockBtn" disabled style="background-color: #8e44ad;">Copy Block</button>
-            <div style="display: flex; gap: 5px;">
-                <input type="number" id="removeDelay" placeholder="Delay (s)" value="0" disabled style="margin-bottom: 0; width: 80px;">
-                <button id="removeBlockBtn" disabled style="background-color: #c0392b; flex-grow: 1;">Remove Block</button>
+            <button id="copyBlockBtn" disabled style="background-color: #8e44ad;">Copy Target Block</button>
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                <button id="removeBlockBtn" disabled style="background-color: #c0392b; width: 100%;">Remove Target Block</button>
+                <div style="display: flex; align-items: center; justify-content: flex-end; gap: 5px;">
+                    <label style="font-size: 12px; color: #aaa;">Delay (sec):</label>
+                    <input type="number" id="removeDelay" placeholder="0" value="0" disabled style="margin-bottom: 0; width: 60px; padding: 2px 5px;">
+                </div>
             </div>
         </div>
 
@@ -265,8 +264,6 @@
             document.getElementById('postValBtn').disabled = false;
             document.getElementById('fetchStrBtn').disabled = false;
             document.getElementById('fetchValBtn').disabled = false;
-            document.getElementById('copySourceId').disabled = false;
-            document.getElementById('copyParentId').disabled = false;
             document.getElementById('copyBlockBtn').disabled = false;
             document.getElementById('removeDelay').disabled = false;
             document.getElementById('removeBlockBtn').disabled = false;
@@ -309,8 +306,6 @@
             document.getElementById('postValBtn').disabled = true;
             document.getElementById('fetchStrBtn').disabled = true;
             document.getElementById('fetchValBtn').disabled = true;
-            document.getElementById('copySourceId').disabled = true;
-            document.getElementById('copyParentId').disabled = true;
             document.getElementById('copyBlockBtn').disabled = true;
             document.getElementById('removeDelay').disabled = true;
             document.getElementById('removeBlockBtn').disabled = true;
@@ -520,28 +515,28 @@
         });
 
         // Copy Block Button
-        const copySourceInput = document.getElementById('copySourceId');
-        const copyParentInput = document.getElementById('copyParentId');
-
         document.getElementById('copyBlockBtn').addEventListener('click', async () => {
-            const sourceId = copySourceInput.value;
-            const parentId = copyParentInput.value;
+            const target = document.getElementById('tTarget').value;
+            if (!target) return;
             const resultDiv = document.getElementById('result');
             resultDiv.innerText = `Copying block...`;
             try {
-                const response = await runCommand("CopyBlock", sourceId, parentId);
+                // Get the parent group dynamically
+                const parentId = PatchWorld.GetParentDevice(target);
+                const response = await runCommand("CopyBlock", target, parentId);
                 resultDiv.innerText = `CopyBlock Result: ${response}`;
             } catch (error) { resultDiv.innerText = `Error: ${error}`; }
         });
 
         const removeDelayInput = document.getElementById('removeDelay');
         document.getElementById('removeBlockBtn').addEventListener('click', async () => {
-            const sourceId = copySourceInput.value;
+            const target = document.getElementById('tTarget').value;
+            if (!target) return;
             const delay = parseFloat(removeDelayInput.value) || 0;
             const resultDiv = document.getElementById('result');
             resultDiv.innerText = `Removing block...`;
             try {
-                const response = await runCommand("RemoveBlock", sourceId, delay);
+                const response = await runCommand("RemoveBlock", target, delay);
                 resultDiv.innerText = `RemoveBlock Result: ${response}`;
             } catch (error) { resultDiv.innerText = `Error: ${error}`; }
         });
